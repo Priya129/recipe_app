@@ -1,0 +1,123 @@
+import 'package:flutter/material.dart';
+import 'package:recipe_app/global/app_colors.dart';
+import 'package:recipe_app/sidebar/sidebar_item.dart';
+
+class SidebarLayout extends StatefulWidget {
+  int selectedIndex = 0;
+  final Function(int) onPressed;
+
+  SidebarLayout({Key? key, required this.selectedIndex, required this.onPressed}) : super(key: key);
+
+  @override
+  _SidebarLayoutState createState() => _SidebarLayoutState();
+}
+
+class _SidebarLayoutState extends State<SidebarLayout> {
+  final LabeledGlobalKey _walletKey = LabeledGlobalKey("walletKey");
+  final LabeledGlobalKey _restaurantKey = LabeledGlobalKey("restaurantKey");
+  final LabeledGlobalKey _myCartKey = LabeledGlobalKey("myCartKey");
+  final LabeledGlobalKey _myProfileKey = LabeledGlobalKey("myProfileKey");
+
+  double startYPosition = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      calculatePosition(widget.selectedIndex);
+    });
+  }
+
+  void calculatePosition(int index) {
+    RenderObject? renderBox;
+    switch (index) {
+      case 0:
+        renderBox = _walletKey.currentContext?.findRenderObject();
+        break;
+      case 1:
+        renderBox = _restaurantKey.currentContext?.findRenderObject();
+        break;
+      case 2:
+        renderBox = _myCartKey.currentContext?.findRenderObject();
+        break;
+      case 3:
+        renderBox = _myProfileKey.currentContext?.findRenderObject();
+        break;
+    }
+
+  }
+
+  void onTabTap(int index) {
+    setState(() {
+      widget.onPressed(index);
+      calculatePosition(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: double.infinity,
+      width: 55,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.transparentColor,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(100.0),
+            bottomRight: Radius.circular(100.0),
+          ),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            const Icon(Icons.menu, color: Colors.grey),
+            const SizedBox(height: 40),
+            const Icon(Icons.search, color: Colors.grey),
+            const SizedBox(height: 80),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  SidebarItem(
+                    key: _walletKey,
+                    text: "Snacks",
+                    onTabTap: () {
+                      onTabTap(0);
+                    },
+                    isSelected: widget.selectedIndex == 0,
+                  ),
+                  SidebarItem(
+                    key: _restaurantKey,
+                    text: "Food",
+                    onTabTap: () {
+                      onTabTap(1);
+                    },
+                    isSelected: widget.selectedIndex == 1,
+                  ),
+                  SidebarItem(
+                    key: _myCartKey,
+                    text: "Drinks",
+                    onTabTap: () {
+                      onTabTap(2);
+                    },
+                    isSelected: widget.selectedIndex == 2,
+                  ),
+                  SidebarItem(
+                    key: _myProfileKey,
+                    text: "Dessert",
+                    onTabTap: () {
+                      onTabTap(3);
+                    },
+                    isSelected: widget.selectedIndex == 3,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
