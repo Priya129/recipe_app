@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/navigation_pages/profile_page.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import '../global/app_colors.dart';
+import 'package:recipe_app/navigation_pages/side_bar_navigations/DessertPage.dart';
+import 'package:recipe_app/navigation_pages/side_bar_navigations/Drinks_Pages.dart';
+import 'package:recipe_app/navigation_pages/side_bar_navigations/Food.dart';
+import 'package:recipe_app/navigation_pages/side_bar_navigations/Snack_Page.dart';
 import '../sidebar/sidebar_layout.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,10 +15,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
   List<Widget> screens = [
-    ProfilePage(),
-    ProfilePage(),
-    ProfilePage(),
-    ProfilePage(),
+    SnackPage(),
+    FoodPage(),
+    DrinksPage(),
+    DessertPage(),
   ];
 
   @override
@@ -39,24 +40,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(child: screens[selectedIndex]),
         ],
       ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.transparent,
-        buttonBackgroundColor: AppColors.mainColor,
-        color: AppColors.mainColor,
-        animationDuration: const Duration(milliseconds: 300),
-        index: selectedIndex,
-        onTap: (int index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
-        items: const <Widget>[
-          Icon(Icons.home, size: 26, color: Colors.white),
-          Icon(Icons.shopping_cart_sharp, size: 26, color: Colors.white),
-          Icon(Icons.favorite, size: 26, color: Colors.white),
-          Icon(Icons.person, size: 26, color: Colors.white),
-        ],
-      ),
+
     );
   }
 }

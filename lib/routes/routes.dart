@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../auth/signin_screen.dart';
 import '../auth/signup_screen.dart';
 import '../navigation_pages/home_page.dart';
+import '../navigation_pages/mainPage.dart';
 
 class Routes {
 
@@ -9,6 +10,11 @@ class Routes {
   void navigateToSignUpScreen(BuildContext context) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => SignUpScreen()),
+    );
+  }
+  void navigateToMainPage(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => MainPage()),
     );
   }
 

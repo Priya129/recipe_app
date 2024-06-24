@@ -1,16 +1,21 @@
+import 'Nutrient.dart';
 import 'ingredient.dart';
 
 class Recipe {
   final String label;
   final String image;
-  final String source;
+  final double calories;
   final List<Ingredient> ingredients;
+  final String url;
+  final TotalNutrients? totalNutrients;
 
   Recipe({
     required this.label,
     required this.image,
-    required this.source,
     required this.ingredients,
+    required this.calories,
+    required this.url,
+    this.totalNutrients,
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
@@ -21,8 +26,12 @@ class Recipe {
     return Recipe(
       label: json['label'],
       image: json['image'],
-      source: json['source'],
+      calories: json['calories'],
+      url: json['url'],
       ingredients: ingredientsList,
+      totalNutrients: json['totalNutrients'] != null
+          ? TotalNutrients.fromJson(json['totalNutrients'])
+          : null,
     );
   }
 
@@ -30,8 +39,10 @@ class Recipe {
     return {
       'label': label,
       'image': image,
-      'source': source,
+      'calories': calories,
+      'url': url,
       'ingredients': ingredients.map((i) => i.toJson()).toList(),
+      'totalNutrients': totalNutrients?.toJson(),
     };
   }
 }

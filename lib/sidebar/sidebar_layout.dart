@@ -1,12 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:recipe_app/global/app_colors.dart';
+import 'package:recipe_app/screens/PostRecipeScreen.dart';
+import 'package:recipe_app/screens/SearchPage.dart';
 import 'package:recipe_app/sidebar/sidebar_item.dart';
 
 class SidebarLayout extends StatefulWidget {
   int selectedIndex = 0;
   final Function(int) onPressed;
 
-  SidebarLayout({Key? key, required this.selectedIndex, required this.onPressed}) : super(key: key);
+  SidebarLayout(
+      {Key? key, required this.selectedIndex, required this.onPressed})
+      : super(key: key);
 
   @override
   _SidebarLayoutState createState() => _SidebarLayoutState();
@@ -44,7 +50,6 @@ class _SidebarLayoutState extends State<SidebarLayout> {
         renderBox = _myProfileKey.currentContext?.findRenderObject();
         break;
     }
-
   }
 
   void onTabTap(int index) {
@@ -70,9 +75,20 @@ class _SidebarLayoutState extends State<SidebarLayout> {
         child: Column(
           children: [
             const SizedBox(height: 50),
-            const Icon(Icons.menu, color: Colors.grey),
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RecipeScreen()));
+                },
+                child: const Icon(Icons.dashboard, color: Colors.grey)),
             const SizedBox(height: 40),
-            const Icon(Icons.search, color: Colors.grey),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SearchPage()));
+              },
+              child: const Icon(Icons.search, color: Colors.grey),
+            ),
             const SizedBox(height: 80),
             Expanded(
               child: Column(

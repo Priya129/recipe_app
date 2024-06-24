@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
     if (isLoggedIn) {
-      Routes().navigateToHomePages(context);
+      Routes().navigateToMainPage(context);
     } else {
       Routes().navigateToSignInScreen(context);
     }

@@ -23,7 +23,7 @@ class _ShoppingCartPage extends State<ShoppingCartPage> {
   Future<void> fetchRecipes() async {
     final apiKey = '4078200b5bb10eb177d25a7066150966';
     final apiId = '43033629';
-    final query = 'food'; // Example query for snacks
+    final query = 'food';
 
     try {
       final encodedQuery = Uri.encodeComponent(query);
@@ -71,7 +71,6 @@ class _ShoppingCartPage extends State<ShoppingCartPage> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('Source: ${recipes[index].source}'),
                 SizedBox(height: 4),
                 Text('Ingredients:'),
                 Column(
