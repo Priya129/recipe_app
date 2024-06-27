@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:recipe_app/global/app_colors.dart';
 
@@ -19,7 +19,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
   TextEditingController _subIngredientsController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _caloriesController = TextEditingController();
-
+  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<String> _subIngredients = [];
   String selectedCuisine = 'Chinese';
 
@@ -58,6 +58,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
       UploadTask uploadTask = storageRef.putData(file!);
       TaskSnapshot snapshot = await uploadTask;
       String downloadUrl = await snapshot.ref.getDownloadURL();
+      String uid = _firebaseAuth.currentUser?.uid ?? '';
 
       await FirebaseFirestore.instance.collection('recipes').add({
         'name': _nameController.text,
@@ -68,6 +69,8 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
         'calories': _caloriesController.text,
         'imageUrl': downloadUrl,
         'createdAt': FieldValue.serverTimestamp(),
+        'userId': uid,
+        'likes':[],
       });
 
       print('Recipe uploaded successfully');
@@ -79,17 +82,21 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Upload new recipe'),
+        title: const Text('Upload new recipe', style: TextStyle(
+          fontSize: 15,
+          fontFamily: 'Poppins'
+        )),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        foregroundColor: AppColors.mainColor,
         elevation: 0,
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.dark,
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.mainColor),
           onPressed: () {
             // handle back button press
           },
@@ -97,12 +104,12 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
         actions: [
           GestureDetector(
             onTap: _uploadRecipe,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 18.0),
-              child: const Text(
+            child: const Padding(
+              padding: EdgeInsets.only(right: 25.0),
+              child: Text(
                 "Post", style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 16,
+                fontSize: 15,
                 color: AppColors.mainColor,
               ),
               ),
@@ -129,7 +136,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
                   width: double.infinity,
                   height: double.infinity,
                 )
-                    : Column(
+                    : const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.cloud_upload, size: 50, color: AppColors.mainColor),
@@ -186,7 +193,6 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
               value: _cookingTime,
               min: 0,
               max: 120,
-
               onChanged: (value) {
                 setState(() {
                   _cookingTime = value;
@@ -241,7 +247,6 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
                 labelText: 'Sub Ingredients',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-
                 ),
               ),
               onSubmitted: (value) {

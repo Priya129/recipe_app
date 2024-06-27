@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:recipe_app/global/app_colors.dart';
@@ -23,8 +24,8 @@ class RecipeDetailPage extends StatelessWidget {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   background: recipe.image.isNotEmpty
-                      ? Image.network(
-                    recipe.image,
+                      ? CachedNetworkImage(
+                    imageUrl: recipe.image,
                     fit: BoxFit.cover,
                   )
                       : const Placeholder(
@@ -54,7 +55,7 @@ class RecipeDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Calories: ${recipe.calories.toStringAsFixed(2)} kcal',
+                          'Calories: ${recipe.calories.toStringAsFixed(2)} kcal/${recipe.yield.toInt()} Servings',
                           style: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Poppins',

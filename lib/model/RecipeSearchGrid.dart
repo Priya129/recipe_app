@@ -5,7 +5,6 @@ import 'ReceipeCard.dart';
 
 class RecipesGrid extends StatelessWidget {
   final List<Recipe> recipes;
-
   const RecipesGrid({Key? key, required this.recipes}) : super(key: key);
 
   @override

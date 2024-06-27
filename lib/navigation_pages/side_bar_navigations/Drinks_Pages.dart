@@ -37,12 +37,12 @@ class _DrinksPageState extends State<DrinksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 30.0, left: 30.0,),
+              padding: const EdgeInsets.only(top: 40.0, left: 30.0),
               child: RichText(
                 text: TextSpan(
                   text: 'Simply Recipe for ',

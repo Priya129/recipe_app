@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:recipe_app/global/app_colors.dart';
-import 'package:recipe_app/screens/PostRecipeScreen.dart';
 import 'package:recipe_app/screens/SearchPage.dart';
 import 'package:recipe_app/sidebar/sidebar_item.dart';
+
+import '../model/RecipePostAdd.dart';
 
 class SidebarLayout extends StatefulWidget {
   int selectedIndex = 0;
@@ -35,19 +36,14 @@ class _SidebarLayoutState extends State<SidebarLayout> {
   }
 
   void calculatePosition(int index) {
-    RenderObject? renderBox;
     switch (index) {
       case 0:
-        renderBox = _walletKey.currentContext?.findRenderObject();
         break;
       case 1:
-        renderBox = _restaurantKey.currentContext?.findRenderObject();
         break;
       case 2:
-        renderBox = _myCartKey.currentContext?.findRenderObject();
         break;
       case 3:
-        renderBox = _myProfileKey.currentContext?.findRenderObject();
         break;
     }
   }
@@ -78,7 +74,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
             GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => RecipeScreen()));
+                      MaterialPageRoute(builder: (context) => RecipePost()));
                 },
                 child: const Icon(Icons.dashboard, color: Colors.grey)),
             const SizedBox(height: 40),

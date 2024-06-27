@@ -3,8 +3,8 @@ import '../components/button.dart';
 import '../components/custom_text_field.dart';
 import '../global/app_colors.dart';
 import '../routes/routes.dart';
-import 'firebase_auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_signupservice.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -80,21 +80,12 @@ class _SignInScreenState extends State<SignInScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.mainColor,
-                    width: 2,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Image.asset(
-                    "assets/Images/stir-fry.png",
-                    height: 150,
-                    width: 150,
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Image.asset(
+                  "assets/Images/cookinglogo.png",
+                  height: 200,
+                  width: 200,
                 ),
               ),
             ),

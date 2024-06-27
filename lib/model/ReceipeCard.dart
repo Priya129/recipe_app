@@ -1,82 +1,118 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/global/app_colors.dart';
+import '../Firebase_services/favorite_service.dart';
 import '../model/recipe.dart';
 
-class RecipeCard extends StatelessWidget {
+class RecipeCard extends StatefulWidget {
   final Recipe recipe;
-
   const RecipeCard({Key? key, required this.recipe}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
+  _RecipeCardState createState() => _RecipeCardState();
+}
 
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.0),
-              child: recipe.image.isNotEmpty
-                  ? Image.network(
-                recipe.image,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              )
-                  : const Placeholder(
-                fallbackHeight: 120,
-                fallbackWidth: double.infinity,
+class _RecipeCardState extends State<RecipeCard> {
+  final FavoritesService _favoritesService = FavoritesService();
+  late Stream<List<String>> _favoritesStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesStream = _favoritesService.getFavorites();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<String>>(
+      stream: _favoritesStream,
+      builder: (context, snapshot) {
+        bool isFavorite = snapshot.data?.contains(widget.recipe.id) ?? false;
+        return Container(
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 2),
               ),
-            ),
+            ],
           ),
-          const SizedBox(height: 8.0),
-          Text(
-            recipe.label,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Container(
-                height: 30,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.mainColor,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: const Center(
-                  child: Text(
-                    "View Recipe",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16.0),
+                  child: Stack(
+                    children: [
+                      widget.recipe.image.isNotEmpty
+                          ? CachedNetworkImage(
+                        imageUrl: widget.recipe.image,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      )
+                          : const Placeholder(
+                        fallbackHeight: 120,
+                        fallbackWidth: double.infinity,
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
+              const SizedBox(height: 8.0),
+              Text(
+                widget.recipe.label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 2.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 20,
+                    width: 56,
+                    decoration: BoxDecoration(
+                      color: AppColors.mainColor,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child:  const Center(
+                      child: Text(
+                        "View Recipe",
+                        style: TextStyle(
+                          fontSize: 8,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? Colors.red : Colors.deepOrange,
+                      size: 15,
+                    ),
+                    onPressed: () {
+                      _favoritesService.toggleFavorite(widget.recipe);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

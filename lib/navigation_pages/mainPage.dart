@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/navigation_pages/Add_Post/AddPost.dart';
 import 'package:recipe_app/navigation_pages/Add_Post/Reels.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:recipe_app/navigation_pages/favorite_page.dart';
+import 'package:recipe_app/screens/ProfileScreen.dart';
 import '../global/app_colors.dart';
 import 'home_page.dart';
 
@@ -18,13 +20,14 @@ class _MainPageState extends State<MainPage> {
     HomePage(),
     AddReels(),
     UploadRecipeScreen(),
-    AddReels(),
-    AddReels(),
+    FavoritesScreen(),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: screens[selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
