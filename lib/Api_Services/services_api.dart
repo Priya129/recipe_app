@@ -1,13 +1,16 @@
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 495b22282ce1914b9775e5fe214ed561b2912c18
 
 import 'package:dio/dio.dart';
 import '../model/recipe.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String apiKey = '4078200b5bb10eb177d25a7066150966';
-  final String apiId = '43033629';
+  final String apiKey = 'api_key';
+  final String apiId = 'api_id';
 
 
 
