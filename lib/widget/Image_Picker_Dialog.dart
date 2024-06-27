@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../global/app_colors.dart';
 
 class ImagePickerDialog extends StatelessWidget {

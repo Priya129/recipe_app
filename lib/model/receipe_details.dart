@@ -24,8 +24,8 @@ class RecipeDetailPage extends StatelessWidget {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   background: recipe.image.isNotEmpty
-                      ? CachedNetworkImage(
-                    imageUrl: recipe.image,
+                      ? Image.network(
+                     recipe.image,
                     fit: BoxFit.cover,
                   )
                       : const Placeholder(

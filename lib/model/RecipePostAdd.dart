@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../global/app_colors.dart';
 
 class RecipePost extends StatefulWidget {
@@ -12,16 +11,34 @@ class RecipePost extends StatefulWidget {
 }
 
 class _RecipePostState extends State<RecipePost> {
-  bool islike = false;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   Future<Map<String, dynamic>?> _getUserData(String userId) async {
     try {
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('user').doc(userId).get();
+      DocumentSnapshot userSnapshot =
+      await FirebaseFirestore.instance.collection('user').doc(userId).get();
       return userSnapshot.data() as Map<String, dynamic>?;
     } catch (e) {
       print('Error fetching user data: $e');
       return null;
     }
   }
+
+  Future<void> _toggleLike(String recipeId, List<dynamic> likes) async {
+    final currentUserId = _firebaseAuth.currentUser?.uid;
+    if (currentUserId == null) return;
+
+    final recipeRef = FirebaseFirestore.instance.collection('recipes').doc(recipeId);
+
+    if (likes.contains(currentUserId)) {
+      likes.remove(currentUserId);
+    } else {
+      likes.add(currentUserId);
+    }
+
+    await recipeRef.update({'likes': likes});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,13 +60,14 @@ class _RecipePostState extends State<RecipePost> {
         stream: FirebaseFirestore.instance.collection('recipes').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+        //    return Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
             return Center(child: Text('Error fetching data'));
           }
 
-          if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(child: Text('No recipes found'));
           }
 
@@ -67,13 +85,17 @@ class _RecipePostState extends State<RecipePost> {
                 );
               }
 
+              final likes = List<String>.from(recipe['likes'] ?? []);
+              int likenumber = likes.length;
+              final currentUserId = _firebaseAuth.currentUser?.uid;
+              final isLiked = currentUserId != null && likes.contains(currentUserId);
+
               return FutureBuilder<Map<String, dynamic>?>(
                 future: _getUserData(userId),
                 builder: (context, userSnapshot) {
                   if (userSnapshot.connectionState == ConnectionState.waiting) {
-                   return Center(child: CircularProgressIndicator());
+                   // return Center(child: CircularProgressIndicator());
                   }
-
                   if (userSnapshot.hasError) {
                     return ListTile(
                       title: Text('Error fetching user data'),
@@ -98,21 +120,20 @@ class _RecipePostState extends State<RecipePost> {
                                   radius: 17,
                                   backgroundImage: NetworkImage(profilePicUrl),
                                 ),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 Text(
                                   username,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontFamily: 'Poppins',
-
                                   ),
                                 ),
                               ],
                             ),
-                            Icon(Icons.more_vert),
+                            const Icon(Icons.more_vert),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Image.network(
                           recipe['imageUrl'] ?? "https://via.placeholder.com/300",
                           height: 300,
@@ -122,25 +143,28 @@ class _RecipePostState extends State<RecipePost> {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: (){
-                                islike = true;
-                              },
-                                child: Icon(
-                                  islike ? Icons.favorite : Icons.favorite_border,
-                                  color: islike? Colors.red : Colors.deepOrange,
-                                  size: 25
-                                ),
+                            IconButton(
+                              icon: Icon(
+                                isLiked ? Icons.favorite : Icons.favorite_border,
+                                size: 30,
+                                color: isLiked ? Colors.red : null,
+                              ),
+                              onPressed: () => _toggleLike(recipe.id, likes),
                             ),
-                            SizedBox(width: 10),
-                            ImageIcon(
+                            const SizedBox(width: 10),
+                            const ImageIcon(
                               AssetImage('assets/Images/chat-bubble.png'),
                               size: 20,
                               color: Colors.black,
                             ),
                           ],
                         ),
-                        Text('1 Likes'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('$likenumber Likes'),
+
+                        ),
+                        Text("I love my recipe works"),
                         const SizedBox(height: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

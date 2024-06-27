@@ -24,7 +24,7 @@ class _HoverIconButtonState extends State<HoverIconButton> {
         });
       },
       child: Tooltip(
-        message: 'Search using image',
+        message: 'Search Recipe using Image',
         child: AnimatedContainer(
           duration: Duration(milliseconds: 200),
           height: 40,

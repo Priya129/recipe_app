@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 495b22282ce1914b9775e5fe214ed561b2912c18
-
 import 'package:dio/dio.dart';
 import '../model/recipe.dart';
 

@@ -53,8 +53,8 @@ class _RecipeCardState extends State<RecipeCard> {
                   child: Stack(
                     children: [
                       widget.recipe.image.isNotEmpty
-                          ? CachedNetworkImage(
-                        imageUrl: widget.recipe.image,
+                          ? Image.network(
+                         widget.recipe.image,
                         fit: BoxFit.cover,
                         width: double.infinity,
                       )

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:recipe_app/global/app_colors.dart';
+import 'package:uuid/uuid.dart';
+
 
 class UploadRecipeScreen extends StatefulWidget {
   @override
@@ -59,8 +61,10 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
       TaskSnapshot snapshot = await uploadTask;
       String downloadUrl = await snapshot.ref.getDownloadURL();
       String uid = _firebaseAuth.currentUser?.uid ?? '';
+      String postId = const Uuid().v1();
 
       await FirebaseFirestore.instance.collection('recipes').add({
+        'postId':postId,
         'name': _nameController.text,
         'description': _descriptionController.text,
         'cookingTime': _cookingTime,
@@ -78,6 +82,26 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
       print('Error uploading recipe: $e');
     }
   }
+
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {
+      if (likes.contains(uid)) {
+        await FirebaseFirestore.instance.collection('recipe').doc(postId).update({
+          'likes': FieldValue.arrayRemove([uid])
+        });
+      } else {
+        await FirebaseFirestore.instance.collection('recipe').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid])
+        });
+      }
+    } catch (err) {
+      print('Error liking post: $err');
+      throw err;
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
