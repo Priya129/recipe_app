@@ -16,8 +16,7 @@ class AuthService {
     }
   }
 
-  Future<User?> signInWithEmailAndPassword(String email,
-      String password) async {
+  Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -35,14 +34,14 @@ class AuthService {
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
-        await _firestore.collection('user').add({
+        await _firestore.collection('user').doc(currentUser.uid).set({
           'uid': currentUser.uid,
           'email': email,
           'username': username,
           'imageUrl': imageUrl,
-          'followings' : [],
-          'followers':[]
-        });
+          'followings': [],
+          'followers': []
+        }, SetOptions(merge: true));
       } else {
         print('User is not logged in.');
       }
@@ -50,5 +49,4 @@ class AuthService {
       print('Error saving user data: ${e.toString()}');
     }
   }
-
 }

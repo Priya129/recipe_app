@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/navigation_pages/Add_Post/AddPost.dart';
-import 'package:recipe_app/navigation_pages/Add_Post/Reels.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:recipe_app/navigation_pages/Add_Post/Reels.dart';
 import 'package:recipe_app/navigation_pages/favorite_page.dart';
 import 'package:recipe_app/screens/ProfileScreen.dart';
 import '../global/app_colors.dart';
@@ -18,7 +18,7 @@ class _MainPageState extends State<MainPage> {
   int selectedIndex = 0;
   final List<Widget> screens = [
     HomePage(),
-    AddReels(),
+    VideoFeedScreen(),
     UploadRecipeScreen(),
     FavoritesScreen(),
     ProfileScreen(),

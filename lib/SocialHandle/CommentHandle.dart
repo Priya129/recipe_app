@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../global/app_colors.dart';
 
 class CommentBottomSheet extends StatefulWidget {
@@ -67,7 +66,9 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.arrow_upward_outlined, color: AppColors.mainColor,),
+                icon: Icon(Icons.arrow_upward_outlined,
+
+                  color: AppColors.mainColor,),
                 onPressed: () {
                   _submitComment(_commentController.text);
                 },
