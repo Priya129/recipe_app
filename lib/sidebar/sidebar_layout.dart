@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:recipe_app/global/app_colors.dart';
-import 'package:recipe_app/screens/SearchPage.dart';
+import 'package:recipe_app/screens/search_page.dart';
 import 'package:recipe_app/sidebar/sidebar_item.dart';
 
-import '../model/RecipePostAdd.dart';
+import '../screens/recipe_post_screen.dart';
 
 
 class SidebarLayout extends StatefulWidget {

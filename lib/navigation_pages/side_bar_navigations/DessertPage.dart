@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/global/app_colors.dart';
-import '../../Api_Services/services_api.dart';
-import '../../model/RecipeSearchGrid.dart';
+import '../../services/api_services/recipe_api_services.dart';
+import '../../widget/recipe_grid.dart';
 import '../../model/recipe.dart';
 
 

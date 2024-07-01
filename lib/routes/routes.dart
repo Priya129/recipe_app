@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../auth/signin_screen.dart';
-import '../auth/signup_screen.dart';
-import '../navigation_pages/home_page.dart';
+import '../Firebase_services/signin_screen.dart';
+import '../Firebase_services/signup_screen.dart';
+import '../screens/home_page.dart';
 import '../navigation_pages/mainPage.dart';
 
 class Routes {

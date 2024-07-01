@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'ingredient.dart';
-import 'Nutrient.dart';
+import 'ingredient_model.dart';
+import 'nutrient_model.dart';
 
 class Recipe {
   final double yield;

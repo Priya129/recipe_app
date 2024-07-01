@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/navigation_pages/Add_Post/AddPost.dart';
+import 'package:recipe_app/screens/upload_recipe_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:recipe_app/navigation_pages/Add_Post/Reels.dart';
-import 'package:recipe_app/navigation_pages/favorite_page.dart';
-import 'package:recipe_app/screens/ProfileScreen.dart';
+import 'package:recipe_app/screens/video_feed_screen.dart';
+import 'package:recipe_app/screens/favorite_page.dart';
+import 'package:recipe_app/screens/profile_screen.dart';
 import '../global/app_colors.dart';
-import 'home_page.dart';
+import '../screens/home_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
