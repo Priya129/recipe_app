@@ -18,6 +18,7 @@ class UploadRecipeVideoScreen extends StatefulWidget {
 
 class _UploadRecipeVideoScreenState extends State<UploadRecipeVideoScreen> {
   Uint8List? file;
+  Uint8List? imagefile;
   final TextEditingController _descriptionController = TextEditingController();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   VideoPlayerController? _videoPlayerController;
@@ -28,6 +29,21 @@ class _UploadRecipeVideoScreenState extends State<UploadRecipeVideoScreen> {
     _descriptionController.dispose();
     _videoPlayerController?.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile =
+      await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        Uint8List pickedImage = await pickedFile.readAsBytes();
+        setState(() {
+          imagefile = pickedImage;
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _pickVideo() async {
@@ -55,6 +71,12 @@ class _UploadRecipeVideoScreenState extends State<UploadRecipeVideoScreen> {
       print('Please select a video');
       return;
     }
+    if (imagefile == null) {
+      print('Please select an image');
+      return;
+    }
+
+
 
     setState(() {
       _isUploading = true;
@@ -62,9 +84,14 @@ class _UploadRecipeVideoScreenState extends State<UploadRecipeVideoScreen> {
 
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference storageRef = FirebaseStorage.instance.ref().child('videos/$fileName');
+      String fileImageName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference imagestorageRef = FirebaseStorage.instance.ref().child('thumbnailimages/$fileName');
+      Reference storageRef = FirebaseStorage.instance.ref().child('videos/$fileImageName');
       UploadTask uploadTask = storageRef.putData(file!);
+      UploadTask uploadImageTask = imagestorageRef.putData(imagefile!);
       TaskSnapshot snapshot = await uploadTask;
+      TaskSnapshot snapshotimage = await uploadImageTask;
+      String downloadUrlImage = await snapshotimage.ref.getDownloadURL();
       String downloadUrl = await snapshot.ref.getDownloadURL();
       String uid = _firebaseAuth.currentUser?.uid ?? '';
       String postId = const Uuid().v1();
@@ -76,6 +103,7 @@ class _UploadRecipeVideoScreenState extends State<UploadRecipeVideoScreen> {
         'createdAt': FieldValue.serverTimestamp(),
         'userId': uid,
         'likes': [],
+        'thumbnailUrl': downloadUrlImage
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -209,24 +237,61 @@ class _UploadRecipeVideoScreenState extends State<UploadRecipeVideoScreen> {
             ),
           ),
           Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                height: 300,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.mainColor, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: imagefile != null
+                    ? Image.memory(
+                  imagefile!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                )
+                    : const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.cloud_upload,
+                        size: 50, color: AppColors.mainColor),
+                    SizedBox(height: 8),
+                    Text(
+                      'Upload Cover',
+                      style: TextStyle(
+                          color: AppColors.mainColor, fontSize: 16),
+                    ),
+                    Text(
+                      'Click here to upload cover photo',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               maxLines: 3,
               controller: _descriptionController,
               decoration: InputDecoration(
                 labelText: 'Description',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   color: AppColors.mainColor
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.mainColor, width: 2),
+                  borderSide: const BorderSide(color: AppColors.mainColor, width: 2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.mainColor, width: 2),
+                  borderSide: const BorderSide(color: AppColors.mainColor, width: 2),
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),

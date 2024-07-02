@@ -8,25 +8,25 @@ class Routes {
 
 
   void navigateToSignUpScreen(BuildContext context) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => SignUpScreen()),
     );
   }
   void navigateToMainPage(BuildContext context) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => MainPage()),
     );
   }
 
 
   void navigateToHomePages(BuildContext context) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 
   void navigateToSignInScreen(BuildContext context) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const SignInScreen()),
     );
   }

@@ -15,6 +15,7 @@ class DrinksPage extends StatefulWidget {
 class _DrinksPageState extends State<DrinksPage> {
   List<Recipe> recipes = [];
   final ApiService apiService = ApiService();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -23,6 +24,9 @@ class _DrinksPageState extends State<DrinksPage> {
   }
 
   Future<void> fetchRecipes() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final fetchedRecipes = await apiService.fetchRecipes('drinks');
       setState(() {
@@ -31,6 +35,9 @@ class _DrinksPageState extends State<DrinksPage> {
     } catch (e) {
       print('Error fetching recipes: $e');
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -65,7 +72,7 @@ class _DrinksPageState extends State<DrinksPage> {
               ),
             ),
             Expanded(
-              child: RecipesGrid(recipes: recipes),
+              child: RecipesGrid(recipes: recipes, isLoading: isLoading,),
             ),
           ],
         ),

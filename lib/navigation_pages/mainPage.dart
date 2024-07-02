@@ -4,6 +4,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:recipe_app/screens/video_feed_screen.dart';
 import 'package:recipe_app/screens/favorite_page.dart';
 import 'package:recipe_app/screens/profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../global/app_colors.dart';
 import '../screens/home_page.dart';
 
@@ -16,19 +17,28 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int selectedIndex = 0;
+  late final String currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  }
+
   final List<Widget> screens = [
     HomePage(),
     VideoFeedScreen(),
     UploadRecipeScreen(),
     FavoritesScreen(),
-    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: screens[selectedIndex],
+      body: selectedIndex == 4
+          ? ProfileScreen(userId: currentUserId, currentUserId: currentUserId)
+          : screens[selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
         buttonBackgroundColor: AppColors.mainColor,
@@ -42,12 +52,16 @@ class _MainPageState extends State<MainPage> {
         },
         items: const <Widget>[
           Icon(Icons.home, size: 26, color: Colors.white),
-          ImageIcon(AssetImage('assets/Images/reels.png'),
+          ImageIcon(
+            AssetImage('assets/Images/reels.png'),
             size: 26,
-            color: Colors.white,),
-          ImageIcon(AssetImage('assets/Images/sign.png'),
+            color: Colors.white,
+          ),
+          ImageIcon(
+            AssetImage('assets/Images/sign.png'),
             size: 26,
-            color: Colors.white,),
+            color: Colors.white,
+          ),
           Icon(Icons.favorite, size: 26, color: Colors.white),
           Icon(Icons.person, size: 26, color: Colors.white),
         ],

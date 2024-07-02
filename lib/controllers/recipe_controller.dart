@@ -1,14 +1,18 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/recipe.dart';
 import '../services/api_services/recipe_api_services.dart';
 
-class RecipeController {
-  final ApiService _apiService = ApiService();
+class RecipeController extends StateNotifier<AsyncValue<List<Recipe>>> {
+  final ApiService apiService;
 
-  Future<List<Recipe>> fetchRecipes(String query) async {
-    return await _apiService.fetchRecipes(query);
-  }
+  RecipeController(this.apiService) : super(AsyncValue.loading());
 
-  Future<List<Recipe>> fetchRecipess(String query, List<String> diets, List<String> allergies) async {
-    return await _apiService.fetchRecipess(query, diets, allergies);
+  Future<void> fetchRecipes(String query) async {
+    try {
+      final recipes = await apiService.fetchRecipes(query);
+      state = AsyncValue.data(recipes);
+    } catch (error, stack) {
+      state = AsyncValue.error(error, stack);
+    }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../global/app_colors.dart';
 class CommentCard extends StatelessWidget {
   final String username;
   final String comment;
@@ -17,8 +19,8 @@ class CommentCard extends StatelessWidget {
       padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
+          borderRadius: BorderRadius.circular(40),
+          color: AppColors.transparentColor,
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),

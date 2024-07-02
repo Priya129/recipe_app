@@ -1,12 +1,10 @@
-// lib/services/api_service.dart
 import 'package:dio/dio.dart';
-
 import '../../model/recipe.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String apiKey = 'api_key';
-  final String apiId = 'api_id';
+  final String apiKey = '3929a7e39517cf6fbd96edd5f3c109fb';
+  final String apiId = '6a592252';
 
   Future<List<Recipe>> fetchRecipess(String query, List<String> diets, List<String> allergies) async {
     String dietParams = diets.map((diet) => diet.toLowerCase()).join(',');

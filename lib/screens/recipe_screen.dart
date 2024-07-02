@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../model/post_recipe_model.dart';
 
 class RecipeScreen extends StatelessWidget {

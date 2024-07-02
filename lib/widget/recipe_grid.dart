@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import '../shimmer/shimmer_recipe_card.dart';
 import '../model/recipe.dart';
 import '../view/recipe_view.dart';
-import 'recipe_card.dart';
+import '../widget/recipe_card.dart';
 
 class RecipesGrid extends StatelessWidget {
   final List<Recipe> recipes;
-  const RecipesGrid({Key? key, required this.recipes}) : super(key: key);
+  final bool isLoading;
+
+  const RecipesGrid({
+    Key? key,
+    required this.recipes,
+    this.isLoading = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +24,14 @@ class RecipesGrid extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 5.0,
           mainAxisSpacing: 10.0,
-          childAspectRatio: 2/3,
+          childAspectRatio: 2 / 3,
         ),
-        itemCount: recipes.length,
+        itemCount: isLoading ? 10 : recipes.length,
         itemBuilder: (context, index) {
+          if (isLoading) {
+            return RecipeCardSkeleton();
+          } else {
+          }
           return GestureDetector(
             onTap: () {
               Navigator.push(
@@ -40,8 +51,10 @@ class RecipesGrid extends StatelessWidget {
               ),
             ),
           );
+
         },
       ),
     );
   }
 }
+

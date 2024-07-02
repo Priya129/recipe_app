@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/global/app_colors.dart';
 import '../Firebase_services/favorite_service.dart';
@@ -6,13 +5,13 @@ import '../model/recipe.dart';
 
 class RecipeCard extends StatefulWidget {
   final Recipe recipe;
-  const RecipeCard({Key? key, required this.recipe}) : super(key: key);
+  const RecipeCard({super.key, required this.recipe});
 
   @override
-  _RecipeCardState createState() => _RecipeCardState();
+  RecipeCardState createState() => RecipeCardState();
 }
 
-class _RecipeCardState extends State<RecipeCard> {
+class RecipeCardState extends State<RecipeCard> {
   final FavoritesService _favoritesService = FavoritesService();
   late Stream<List<String>> _favoritesStream;
 
@@ -54,7 +53,7 @@ class _RecipeCardState extends State<RecipeCard> {
                     children: [
                       widget.recipe.image.isNotEmpty
                           ? Image.network(
-                         widget.recipe.image,
+                          widget.recipe.image,
                         fit: BoxFit.cover,
                         width: double.infinity,
                       )

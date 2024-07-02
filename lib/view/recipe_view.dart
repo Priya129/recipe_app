@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/global/app_colors.dart';
 import '../model/nutrient_info_model.dart';
@@ -23,8 +24,8 @@ class RecipeDetailPage extends StatelessWidget {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   background: recipe.image.isNotEmpty
-                      ? Image.network(
-                    recipe.image,
+                      ? CachedNetworkImage(
+                    imageUrl: recipe.image,
                     fit: BoxFit.cover,
                   )
                       : const Placeholder(

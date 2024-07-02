@@ -4,40 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:recipe_app/global/app_colors.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 class VideoFeedScreen extends StatefulWidget {
+  const VideoFeedScreen({super.key});
+
   @override
-  _VideoFeedScreenState createState() => _VideoFeedScreenState();
+  VideoFeedScreenState createState() => VideoFeedScreenState();
 }
 
-class _VideoFeedScreenState extends State<VideoFeedScreen> {
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  Map<String, VideoPlayerController> _videoControllers = {};
+class VideoFeedScreenState extends State<VideoFeedScreen> {
+  Uint8List? file;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final Map<String, ChewieController> _chewieControllers = {};
 
   @override
   void dispose() {
-    for (var controller in _videoControllers.values) {
+    for (var controller in _chewieControllers.values) {
       controller.dispose();
     }
     super.dispose();
   }
 
-  Future<VideoPlayerController> _initializeVideoController(String videoUrl) async {
-    var videoController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
-    await videoController.initialize();
-    return videoController;
+  Future<ChewieController> _initializeChewieController(String videoUrl) async {
+    var videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+    await videoPlayerController.initialize();
+    return ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+    );
   }
 
-  void _playController(VideoPlayerController controller) {
-    if (controller.value.isInitialized) {
-      controller.play();
-    }
-  }
-
-  void _pauseController(VideoPlayerController controller) {
-    if (controller.value.isInitialized) {
-      controller.pause();
-    }
+  Future<Map<String, dynamic>> _fetchUserProfile(String userId) async {
+    var userDoc = await FirebaseFirestore.instance.collection('user').doc(userId).get();
+    return userDoc.data() ?? {};
   }
 
   @override
@@ -79,65 +80,88 @@ class _VideoFeedScreenState extends State<VideoFeedScreen> {
               var description = videoData['description'];
               var postId = videoData['postId'];
               var likes = List<String>.from(videoData['likes']);
-              var userId = _firebaseAuth.currentUser?.uid ?? '';
+              var userId = videoData['userId'];
+              var currentUserId = _firebaseAuth.currentUser?.uid ?? '';
 
-              return FutureBuilder<VideoPlayerController>(
-                future: _videoControllers.containsKey(postId)
-                    ? Future.value(_videoControllers[postId])
-                    : _initializeVideoController(videoUrl).then((controller) {
-                  _videoControllers[postId] = controller;
+              return FutureBuilder<ChewieController>(
+                future: _chewieControllers.containsKey(postId)
+                    ? Future.value(_chewieControllers[postId])
+                    : _initializeChewieController(videoUrl).then((controller) {
+                  _chewieControllers[postId] = controller;
                   return controller;
                 }),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    var videoController = snapshot.data!;
-                    _playController(videoController);
-                    return GestureDetector(
-                      onTap: () {
-                        if (videoController.value.isPlaying) {
-                          _pauseController(videoController);
-                        } else {
-                          _playController(videoController);
-                        }
-                      },
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: AspectRatio(
-                              aspectRatio: videoController.value.aspectRatio,
-                              child: VideoPlayer(videoController),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 20,
-                            left: 10,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                    var chewieController = snapshot.data!;
+                    return FutureBuilder<Map<String, dynamic>>(
+                      future: _fetchUserProfile(userId),
+                      builder: (context, userSnapshot) {
+                        if (userSnapshot.connectionState == ConnectionState.done) {
+                          var userProfile = userSnapshot.data!;
+                          return GestureDetector(
+                            onTap: () {
+                              if (chewieController.isPlaying) {
+                                chewieController.pause();
+                              } else {
+                                chewieController.play();
+                              }
+                            },
+                            child: Stack(
                               children: [
-                                Text(
-                                  description,
-                                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                                Center(
+                                  child: Chewie(
+                                    controller: chewieController,
+                                  ),
                                 ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        likes.contains(userId) ? Icons.favorite : Icons.favorite_border,
-                                        color: likes.contains(userId) ? Colors.red : Colors.white,
+                                Positioned(
+                                  bottom: 20,
+                                  left: 20,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(userProfile['imageUrl']),
+                                            radius: 20,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            userProfile['username'],
+                                            style: const TextStyle(color: Colors.white, fontSize: 16),
+                                          ),
+                                        ],
                                       ),
-                                      onPressed: () => likePost(postId, userId, likes),
-                                    ),
-                                    Text(
-                                      '${likes.length} likes',
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ],
+                                      SizedBox(height: 10),
+                                      Text(
+                                        description,
+                                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              likes.contains(currentUserId) ? Icons.favorite : Icons.favorite_border,
+                                              color: likes.contains(currentUserId) ? Colors.red : Colors.white,
+                                            ),
+                                            onPressed: () => likePost(postId, currentUserId, likes),
+                                          ),
+                                          Text(
+                                            '${likes.length} likes',
+                                            style: const TextStyle(color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
+                          );
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      },
                     );
                   } else {
                     return const Center(child: CircularProgressIndicator());

@@ -15,6 +15,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  bool isLoading = false;
   final List<String> diets = [
     'Vegetarian', 'Vegan', 'Paleo', 'High-Fiber', 'High-Protein', 'Low-Carb',
     'Low-Fat', 'Low-Sodium', 'Low-Sugar', 'Alcohol-Free', 'Balanced', 'Immunity'
@@ -46,6 +47,9 @@ class _SearchPageState extends State<SearchPage> {
     String query = searchController.text;
     List<String> selectedDietsList = selectedDiets.keys.where((key) => selectedDiets[key]!).toList();
     List<String> selectedAllergiesList = selectedAllergies.keys.where((key) => selectedAllergies[key]!).toList();
+    setState(() {
+      isLoading = true;
+    });
 
     try {
       List<Recipe> recipes = await ApiService().fetchRecipess(query, selectedDietsList, selectedAllergiesList);
@@ -55,6 +59,9 @@ class _SearchPageState extends State<SearchPage> {
     } catch (e) {
       print('Error: $e');
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -239,8 +246,8 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: RecipeGrid(recipes: searchResults),
+              height: MediaQuery.of(context).size.height * 1,
+              child: RecipeGrid(recipes: searchResults, isLoading: isLoading,),
             ),
           ],
         ),

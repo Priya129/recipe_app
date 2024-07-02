@@ -1,16 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../global/app_colors.dart';
+import 'profile_screen.dart';
 
 class SearchUserScreen extends StatefulWidget {
+  const SearchUserScreen({super.key});
+
   @override
-  _SearchUserScreenState createState() => _SearchUserScreenState();
+  SearchUserScreenState createState() => SearchUserScreenState();
 }
 
-class _SearchUserScreenState extends State<SearchUserScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class SearchUserScreenState extends State<SearchUserScreen> {
+  String currentid = FirebaseAuth.instance.currentUser!.uid;
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final TextEditingController _searchController = TextEditingController();
   List<DocumentSnapshot> _searchResults = [];
   bool _isLoading = false;
@@ -24,13 +28,10 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
 
     try {
       String searchText = _searchController.text;
-      print('Searching for: $searchText'); // Debugging information
-
-      QuerySnapshot querySnapshot = await _firestore.collection('user')
-          .where('username', isGreaterThanOrEqualTo: searchText)
-          .where('username', isLessThanOrEqualTo: searchText + '\uf8ff')
+      QuerySnapshot querySnapshot = await firestore.collection('user')
+          .where('username', isGreaterThanOrEqualTo: searchText.toUpperCase())
+          .where('username', isLessThan: '${searchText.toLowerCase()}z')
           .get();
-
       print('Query results: ${querySnapshot.docs}'); // Debugging information
 
       setState(() {
@@ -51,9 +52,9 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   Future<void> _followUnfollowUser(String followeeUid) async {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
-    await _firestore.runTransaction((transaction) async {
-      DocumentReference currentUserRef = _firestore.collection('user').doc(currentUserUid);
-      DocumentReference followeeRef = _firestore.collection('user').doc(followeeUid);
+    await firestore.runTransaction((transaction) async {
+      DocumentReference currentUserRef = firestore.collection('user').doc(currentUserUid);
+      DocumentReference followeeRef = firestore.collection('user').doc(followeeUid);
 
       DocumentSnapshot currentUserSnapshot = await transaction.get(currentUserRef);
       DocumentSnapshot followeeSnapshot = await transaction.get(followeeRef);
@@ -84,8 +85,12 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Search users...',
+            hintStyle: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 16,
+            ),
             border: InputBorder.none,
           ),
           onChanged: (value) {
@@ -94,7 +99,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
         ),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
           ? Center(child: Text(_errorMessage))
           : ListView.builder(
@@ -121,17 +126,30 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 color: AppColors.mainColor,
               ),
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   _followUnfollowUser(userId);
                 },
-                  child: Center(
-                    child: Text(isFollowing ? 'Unfollow' : 'Follow', style: TextStyle(
+                child: Center(
+                  child: Text(
+                    isFollowing ? 'Unfollow' : 'Follow',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontFamily: 'Poppins',
-                        fontSize: 12,
-                    ),),
-                  ), ),
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(userId: userId,
+                    currentUserId: currentid,),
+                ),
+              );
+            },
           );
         },
       ),
